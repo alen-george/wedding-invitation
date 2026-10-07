@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Wedding Invitation</title>
+
+  <!-- Link previews (WhatsApp, iMessage, Facebook) are read before any JavaScript runs,
+       so edit these four lines by hand. og:image must be a full URL once the site is live,
+       e.g. https://yourname.github.io/wedding-invitation/photos/hero-1.jpg -->
+  <meta name="description" content="Emma & James are getting married on 12 December 2026. Tap to view the invitation and RSVP.">
+  <meta property="og:title" content="Emma & James · Wedding Invitation">
+  <meta property="og:description" content="Saturday, 12 December 2026 · New York. Tap to view the invitation and RSVP.">
+  <meta property="og:image" content="photos/hero-1.jpg">
+  <meta property="og:type" content="website">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Great+Vibes&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="petals" aria-hidden="true"></canvas>
+
+  <!-- Animated envelope intro -->
+  <div id="intro" class="intro">
+    <p class="eyebrow">You are invited to the wedding of</p>
+    <h2 id="introNames" class="intro-names"></h2>
+    <div class="envelope" id="envelope">
+      <div class="env-back"></div>
+      <div class="env-letter">
+        <span class="letter-names" id="letterNames"></span>
+        <small id="letterDate"></small>
+      </div>
+      <div class="env-front"></div>
+      <div class="env-flap"></div>
+      <button class="seal" id="seal" aria-label="Open the invitation"></button>
+    </div>
+    <p class="intro-hint">Tap the seal to open</p>
+  </div>
+
+  <nav class="nav" id="nav" aria-label="Sections">
+    <a href="#home" class="brand" id="navBrand"></a>
+    <div class="nav-links">
+      <a href="#couple">Couple</a>
+      <a href="#events">When &amp; Where</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#rsvp">RSVP</a>
+      <a href="#wishes">Wishes</a>
+    </div>
+  </nav>
+
+  <header class="hero" id="home">
+    <div class="hero-slides" id="heroSlides"></div>
+    <div class="hero-content">
+      <p class="eyebrow fade-up" style="--d:.2s" id="heroTagline"></p>
+      <h1 class="names" id="heroNames"></h1>
+      <div class="hero-divider fade-up" style="--d:1.6s"><span></span></div>
+      <p class="hero-date fade-up" style="--d:1.8s" id="heroDate"></p>
+      <p class="hero-place fade-up" style="--d:1.95s" id="heroPlace"></p>
+      <div class="countdown fade-up" style="--d:2.2s" id="countdown"></div>
+    </div>
+    <a href="#couple" class="scroll-cue" aria-label="Scroll down"><span></span></a>
+  </header>
+
+  <main>
+    <section id="couple">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">The happy couple</p>
+          <h2>Bride &amp; Groom</h2>
+          <span class="ornament"></span>
+        </div>
+        <div class="couple-grid" id="coupleGrid"></div>
+      </div>
+    </section>
+
+    <section id="events" class="events-section">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Save the date</p>
+          <h2>When &amp; Where</h2>
+          <span class="ornament"></span>
+        </div>
+        <p class="events-intro reveal" id="inviteMsg"></p>
+        <div class="events" id="eventsList"></div>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Moments</p>
+          <h2>Our Gallery</h2>
+          <span class="ornament"></span>
+        </div>
+        <div class="gallery" id="galleryGrid"></div>
+      </div>
+    </section>
+
+    <section id="rsvp" class="rsvp-section">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Kindly reply</p>
+          <h2>Will you join us?</h2>
+          <span class="ornament"></span>
+          <p class="rsvp-deadline" id="rsvpDeadline"></p>
+        </div>
+
+        <form id="rsvpForm" class="rsvp-card reveal" novalidate>
+          <p class="demo-note" id="demoNote" hidden>
+            Demo mode: responses are saved only in this browser. Add your Google Apps Script URL to
+            <code>rsvp.endpoint</code> in <code>js/config.js</code> to collect real RSVPs.
+          </p>
+          <label class="field">
+            <span>Your name(s)</span>
+            <input type="text" name="name" maxlength="100" autocomplete="name" placeholder="e.g. Sarah &amp; Tom Miller" required>
+          </label>
+
+          <fieldset class="choices">
+            <legend>Will you be attending?</legend>
+            <label class="choice">
+              <input type="radio" name="attending" value="yes" required>
+              <span><i aria-hidden="true">♥</i><b id="lblYes"></b></span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="attending" value="no">
+              <span><i aria-hidden="true">✉</i><b id="lblNo"></b></span>
+            </label>
+          </fieldset>
+
+          <label class="field" id="guestsField" hidden>
+            <span>Number of guests (including you)</span>
+            <select name="guests" id="guestsSelect"></select>
+          </label>
+
+          <label class="field">
+            <span>A message for the couple <em>(optional)</em></span>
+            <textarea name="comment" rows="4" maxlength="1000" placeholder="Share your wishes, a memory, or a song request…"></textarea>
+          </label>
+
+          <!-- Spam trap: real visitors never see or fill this -->
+          <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <button type="submit" class="btn btn-block" id="rsvpSubmit">Send RSVP</button>
+          <p class="form-status" id="rsvpStatus" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="rsvp-card rsvp-thanks" id="rsvpThanks" hidden>
+          <svg class="check" viewBox="0 0 52 52" aria-hidden="true">
+            <circle cx="26" cy="26" r="24" fill="none"/><path fill="none" d="M15 27l7 7 15-16"/>
+          </svg>
+          <h3 id="thanksTitle">Thank you!</h3>
+          <p id="thanksMsg"></p>
+          <button type="button" class="btn btn-outline" id="rsvpAgain">Send another response</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="wishes">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Guestbook</p>
+          <h2>Love &amp; Wishes</h2>
+          <span class="ornament"></span>
+        </div>
+        <div class="wishes" id="wishesList"><p class="wishes-empty">Loading wishes…</p></div>
+        <div class="center"><button type="button" class="btn btn-outline" id="moreWishes" hidden>Show more wishes</button></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-names" id="footerNames"></p>
+    <p class="footer-date" id="footerDate"></p>
+    <p class="footer-note" id="footerNote"></p>
+    <p class="hashtag" id="hashtag"></p>
+    <div class="contacts" id="contacts"></div>
+  </footer>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" tabindex="-1">
+    <button class="lb-btn lb-close" id="lbClose" aria-label="Close">×</button>
+    <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous photo">‹</button>
+    <figure>
+      <img id="lbImg" alt="">
+      <figcaption id="lbCap"></figcaption>
+    </figure>
+    <button class="lb-btn lb-next" id="lbNext" aria-label="Next photo">›</button>
+  </div>
+
+  <button class="music-btn" id="musicBtn" hidden aria-label="Play or pause music">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+  </button>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
