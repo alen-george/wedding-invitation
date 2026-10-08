@@ -10,16 +10,18 @@ window.WEDDING_CONFIG = {
   /* ---------- The couple ---------- */
   bride: {
     firstName: "Thaleetha Kummi",                       // shown big on the page
+    shortName: "Thaleetha",
     fullName: "Thaleetha Kummi Sunil",
-    parents: "Daughter of Mr. Sunil Jose  & Mrs. Dayana Sunil",
+    parents: "Daughter of Mr. Sunil Jose  & Mrs. Dayana Sunil, Vettikuzhiyil",
     bio: "A social worker and a sunshine soul who loves sports and long conversations.",
     photo: "photos/bride.jpg"                // put the file in the photos/ folder
   },
   groom: {
     firstName: "Alen",
+    shortName: "Alen",
     fullName: "Alen George",
-    parents: "Son of Mr. George Thomas & Mrs. Lucy George",
-    bio: "A techie and full-time optimist who still can't believe she said yes.",
+    parents: "Son of Mr. George Thomas & Mrs. Lucy George, Moloparambil",
+    bio: "A techie and adventurous soul who loves exploring new places.",
     photo: "photos/groom.jpg"
   },
   nameOrder: "groom",                        // "bride" → Emma & James, "groom" → James & Emma
@@ -39,8 +41,8 @@ window.WEDDING_CONFIG = {
        "A threefold cord is not quickly broken."                                                                Ecclesiastes 4:12
        "Grant that I may find mercy and may grow old together with her."                                        Tobit 8:7  */
   bibleVerse: {
-    text: "What therefore God has joined together, let not man put asunder.",
-    reference: "Mark 10:9"
+    text: "Love bears all things, believes all things, hopes all things, endures all things. Love never ends.",
+    reference: "1 Corinthians 13:7-8"
   },
 
   /* ---------- Date & time ---------- */
@@ -116,7 +118,7 @@ window.WEDDING_CONFIG = {
       projectId: "weddinginvites-f5395",
       appId: "1:424563779387:web:a4ce969b881dead135f91e"
     },
-    deadline: "2026-11-30",                  // "" for no deadline
+    deadline: "2026-12-15",                  // "" for no deadline
     maxGuests: 10,                           // most family members one reply can include (counting themselves)
     attendingLabel: "Joyfully accept",
     decliningLabel: "Regretfully decline",

@@ -13,7 +13,7 @@
   --soft: #f4ebe6;
   --line: rgba(61, 51, 48, 0.12);
 
-  --script: "Great Vibes", cursive;
+  --script: "Parisienne", cursive;
   --serif: "Cormorant Garamond", Georgia, serif;
   --sans: "Montserrat", system-ui, sans-serif;
 
@@ -265,7 +265,7 @@ section { padding: clamp(4.5rem, 10vw, 7.5rem) 0; position: relative; }
 .names {
   font-family: var(--script);
   font-weight: 400;
-  font-size: clamp(3.4rem, 13vw, 8rem);
+  font-size: clamp(3.4rem, 13vw, 6.4rem);
   line-height: 1.05;
   margin: 1rem 0 0.5rem;
   display: flex;
@@ -277,7 +277,7 @@ section { padding: clamp(4.5rem, 10vw, 7.5rem) 0; position: relative; }
 }
 .names .name { display: inline-block; padding: 0 0.15em; clip-path: inset(-30% 100% -30% -10%); }
 .names .amp { display: inline-block; color: var(--accent); font-size: 0.7em; opacity: 0; transform: scale(0.4) rotate(-20deg); }
-@media (max-width: 560px) {
+@media (max-width: 900px) {
   .names { flex-direction: column; align-items: center; }
 }
 .hero-divider { width: 180px; margin: 1.2rem auto; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent); position: relative; }

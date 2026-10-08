@@ -21,7 +21,7 @@
   const events = C.events || [];
   const R = C.rsvp || {};
   const [first, second] = C.nameOrder === "groom" ? [C.groom, C.bride] : [C.bride, C.groom];
-  const coupleNames = `${first.firstName} & ${second.firstName}`;
+  const coupleNames = `${first.shortName} & ${second.shortName}`;
   const initials = `${first.firstName.charAt(0)}&${second.firstName.charAt(0)}`;
 
   const ORNAMENT =
@@ -200,7 +200,7 @@
   function renderHero() {
     $("#heroTagline").textContent = C.tagline || "We're getting married";
     $("#heroNames").innerHTML =
-      `<span class="name">${esc(first.firstName)}</span><span class="amp">&amp;</span><span class="name">${esc(second.firstName)}</span>`;
+      `<span class="name">${esc(first.firstName)}</span><span class="amp">&amp;</span><span class="name">${esc(second.shortName)}</span>`;
     $("#heroDate").textContent = mainDate ? fmtDate(mainDate) : "";
     const v = events[0] && events[0].venue;
     $("#heroPlace").textContent = v ? v.city || v.name || "" : "";
