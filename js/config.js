@@ -11,14 +11,14 @@ window.WEDDING_CONFIG = {
   bride: {
     firstName: "Thaleetha",                       // shown big on the page
     fullName: "Thaleetha Kummi Sunil",
-    parents: "Daughter of Mr. & Mrs. Sunil Jose",
+    parents: "Daughter of Mr. Sunil Jose  & Mrs. Dayana Sunil",
     bio: "A social worker and a sunshine soul who loves sports and long conversations.",
     photo: "photos/bride.jpg"                // put the file in the photos/ folder
   },
   groom: {
     firstName: "Alen",
     fullName: "Alen George",
-    parents: "Son of Mr. & Mrs. George Thomas",
+    parents: "Son of Mr. George Thomas & Mrs. Lucy George",
     bio: "A techie and full-time optimist who still can't believe she said yes.",
     photo: "photos/groom.jpg"
   },
@@ -29,6 +29,19 @@ window.WEDDING_CONFIG = {
     "Together with our families, we joyfully invite you to celebrate the beginning of our forever. " +
     "Your presence would mean the world to us.",
   hashtag: "#AlenWedsThaleetha",
+
+  /* ---------- Bible verse ----------
+     Shown just below the names. Set text to "" to hide it.
+     Some other verses couples often choose (RSV Catholic Edition wording):
+       "Love bears all things, believes all things, hopes all things, endures all things. Love never ends."   1 Corinthians 13:7-8
+       "Many waters cannot quench love, neither can floods drown it."                                          Song of Solomon 8:7
+       "And above all these put on love, which binds everything together in perfect harmony."                  Colossians 3:14
+       "A threefold cord is not quickly broken."                                                                Ecclesiastes 4:12
+       "Grant that I may find mercy and may grow old together with her."                                        Tobit 8:7  */
+  bibleVerse: {
+    text: "What therefore God has joined together, let not man put asunder.",
+    reference: "Mark 10:9"
+  },
 
   /* ---------- Date & time ---------- */
   // The venue's offset from UTC. It keeps the countdown and calendar links right for guests in other countries.
@@ -47,8 +60,7 @@ window.WEDDING_CONFIG = {
       title: "Wedding Ceremony",
       start: "2027-01-02T16:00",
       end: "2027-01-02T20:30",
-      description: "Please be seated by 2:45 PM.",
-      dressCode: "Formal attire",
+      description: "Please be seated by 4:30 PM.",
       venue: {
         name: "Sacred Heart Church Poovarani",
         address: "Poovarani, Pala, Kerala, India",
@@ -62,7 +74,6 @@ window.WEDDING_CONFIG = {
       start: "2027-01-02T18:30",
       end: "2027-01-02T21:00",
       description: "Dinner, music and plenty of celebration.",
-      dressCode: "Black tie optional",
       venue: {
         name: "Sacred Heart Church Parish Hall",
         address: "Poovarani, Pala, Kerala, India",
@@ -84,7 +95,7 @@ window.WEDDING_CONFIG = {
     heroInterval: 6000,                      // milliseconds per slide
     gallery: [
       { src: "photos/gallery-1.jpg", caption: "Where it all began" },
-      { src: "photos/gallery-2.jpg", caption: "Our first trip" },
+      { src: "photos/gallery-2.jpg", caption: "" },
       { src: "photos/gallery-3.jpg", caption: "The proposal" },
       { src: "photos/gallery-4.jpg", caption: "PRECANA" },
       { src: "photos/gallery-5.jpg", caption: "" },
@@ -93,13 +104,20 @@ window.WEDDING_CONFIG = {
   },
 
   /* ---------- RSVP & wishes ----------
-     endpoint: the Google Apps Script web-app URL (see README.md, "RSVP setup").
-     While it is empty the form runs in demo mode and responses stay in your own browser only. */
+     Replies are saved in Firebase (free). Follow "RSVP setup" in README.md once, then paste
+     the values from your Firebase web app below. While projectId is empty the form runs in
+     demo mode and responses stay in your own browser only.
+     See every reply and the total headcount at admin.html on your site. */
   rsvp: {
     enabled: true,
-    endpoint: "",
+    firebase: {
+      apiKey: "AIzaSyD7vbNp8kZbbFvi8UmXmhrXJyw_ll2TQBs",
+      authDomain: "weddinginvites-f5395.firebaseapp.com",
+      projectId: "weddinginvites-f5395",
+      appId: "1:424563779387:web:a4ce969b881dead135f91e"
+    },
     deadline: "2026-11-30",                  // "" for no deadline
-    maxGuests: 5,                            // largest party size a guest can pick
+    maxGuests: 10,                           // most family members one reply can include (counting themselves)
     attendingLabel: "Joyfully accept",
     decliningLabel: "Regretfully decline",
     thanksAttending: "Wonderful! We can't wait to celebrate with you.",
@@ -109,7 +127,7 @@ window.WEDDING_CONFIG = {
 
   /* ---------- Optional extras ---------- */
   music: {
-    src: "",                                 // e.g. "music/our-song.mp3" (leave empty for no music)
+    src: "music/music.mp3",                                 // e.g. "music/our-song.mp3" (leave empty for no music)
     autoplay: true,                          // starts when the guest opens the envelope
     volume: 0.5
   },
@@ -124,8 +142,8 @@ window.WEDDING_CONFIG = {
   },
 
   contacts: [
-    { name: "Alen", phone: "+1 212 555 0142" },
-    { name: "Thaleetha", phone: "+1 212 555 0178" }
+    { name: "Alen", phone: "+917012877627" },
+    { name: "Thaleetha" }
   ],
   footerNote: "Your presence is the greatest gift of all."
 };

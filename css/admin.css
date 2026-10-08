@@ -1,0 +1,47 @@
+/* RSVP responses page (admin.html). Builds on style.css. */
+
+.admin main { padding: clamp(2.5rem, 7vw, 4.5rem) 0 4rem; }
+.admin .section-head { margin-bottom: 2rem; }
+.admin .section-head h1 { font-family: var(--script); font-weight: 400; font-size: clamp(2.6rem, 8vw, 3.8rem); line-height: 1.15; margin-top: 0.4rem; }
+
+.admin-card {
+  max-width: 520px; margin: 0 auto;
+  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  display: grid; gap: 1.2rem; justify-items: center; text-align: center;
+}
+
+.admin-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.8rem 1rem; margin-bottom: 1.5rem; }
+.who { font-family: var(--sans); font-size: 0.78rem; color: var(--muted); overflow-wrap: anywhere; }
+.admin-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.admin-actions .btn { padding: 0.65rem 1.1rem; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; }
+.stat b { display: block; font-size: 2.2rem; font-weight: 600; line-height: 1.1; font-variant-numeric: lining-nums tabular-nums; }
+.stat span { display: block; line-height: 1.5; font-family: var(--sans); font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.stat.main { background: var(--primary); border-color: var(--primary); color: #fff; }
+.stat.main span { color: rgba(255, 255, 255, 0.85); }
+
+.filters { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1rem; }
+.filters input, .filters select {
+  flex: 1 1 200px; min-width: 0;
+  padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 10px;
+  background: #fffdfb; color: var(--text); font: inherit; font-size: 1.05rem;
+}
+.filters select { flex: 0 1 180px; }
+.filters input:focus, .filters select:focus { outline: none; border-color: var(--primary); }
+
+.responses { display: grid; gap: 0.7rem; }
+.resp { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.2rem; }
+.resp-top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.8rem; }
+.resp-top strong { font-size: 1.2rem; font-weight: 600; margin-right: auto; overflow-wrap: anywhere; }
+.resp .badge { font-size: 0.6rem; }
+.badge.dup { background: #fdf3e2; color: #6d5326; }
+.resp-msg { font-style: italic; margin-top: 0.4rem; white-space: pre-line; overflow-wrap: anywhere; }
+.resp-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem; margin-top: 0.6rem; font-family: var(--sans); font-size: 0.72rem; color: var(--muted); }
+.resp-meta time { margin-right: auto; }
+.link-btn { background: none; border: none; padding: 0.3rem 0; font: inherit; color: var(--primary); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.link-btn.danger { color: #b3261e; }
+.link-btn:disabled { opacity: 0.5; cursor: progress; }
+.empty { text-align: center; color: var(--muted); font-style: italic; padding: 2rem 0; }

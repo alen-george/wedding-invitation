@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>RSVP Responses</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Great+Vibes&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin">
+  <main class="container">
+    <header class="section-head">
+      <p class="eyebrow">For the couple</p>
+      <h1 id="title">RSVP Responses</h1>
+    </header>
+
+    <div class="admin-card" id="notConfigured" hidden>
+      <p>Firebase isn't connected yet. Follow "RSVP setup" in README.md, then fill in
+        <code>rsvp.firebase</code> in <code>js/config.js</code>.</p>
+    </div>
+
+    <div class="admin-card" id="signedOut" hidden>
+      <p>Sign in with the Google account you listed in your Firestore rules.</p>
+      <button type="button" class="btn" id="signIn">Sign in with Google</button>
+      <p class="form-status error" id="authError" role="alert"></p>
+    </div>
+
+    <div id="dashboard" hidden>
+      <div class="admin-bar">
+        <span class="who" id="who"></span>
+        <div class="admin-actions">
+          <button type="button" class="btn btn-outline" id="refresh">Refresh</button>
+          <button type="button" class="btn btn-outline" id="csv">Download CSV</button>
+          <button type="button" class="btn btn-outline" id="signOut">Sign out</button>
+        </div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="filters">
+        <input type="search" id="search" placeholder="Search by name" aria-label="Search by name">
+        <select id="filter" aria-label="Show">
+          <option value="all">All replies</option>
+          <option value="yes">Attending</option>
+          <option value="no">Declined</option>
+        </select>
+      </div>
+
+      <p class="form-status" id="status" role="status" aria-live="polite"></p>
+      <div class="responses" id="responses"></div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>

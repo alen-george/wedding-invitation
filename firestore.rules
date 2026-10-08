@@ -1,0 +1,56 @@
+rules_version = '2';
+
+// Security rules for the wedding RSVP database.
+// Paste this whole file into Firebase console → Firestore Database → Rules → Publish.
+// Before publishing, put the couple's Google account emails in isCouple() below.
+//
+//   rsvps/{id}   every reply (name, attending, family members, message). Guests can only add;
+//                only the couple can read them, on admin.html.
+//   wishes/{id}  public guestbook copy of replies that have a message, same id as the RSVP.
+//                Deleting one only removes it from the website; the RSVP itself stays.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isCouple() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in ['alen.appu98@gmail.com', 'alenthaleetha@gmail.com'];
+    }
+
+    function validName(d) {
+      return d.name is string && d.name.size() > 0 && d.name.size() <= 100;
+    }
+
+    match /rsvps/{id} {
+      allow create: if (validRsvp(request.resource.data)) || isCouple();
+      allow read, update, delete: if isCouple();
+
+      function validRsvp(d) {
+        return d.keys().hasOnly(['name', 'attending', 'members', 'message', 'createdAt'])
+          && validName(d)
+          && ((d.attending == 'yes' && d.members is int && d.members >= 1 && d.members <= 20)
+              || (d.attending == 'no' && d.members == 0))
+          && d.message is string && d.message.size() <= 1000
+          && d.createdAt == request.time;
+      }
+    }
+
+    match /wishes/{id} {
+      allow get: if true;
+      allow list: if request.query.limit <= 50 || isCouple();
+      allow create: if (validWish(request.resource.data)
+                        && existsAfter(/databases/$(database)/documents/rsvps/$(id)))
+                    || isCouple();
+      allow update, delete: if isCouple();
+
+      function validWish(d) {
+        return d.keys().hasOnly(['name', 'attending', 'message', 'createdAt'])
+          && validName(d)
+          && d.attending in ['yes', 'no']
+          && d.message is string && d.message.size() > 0 && d.message.size() <= 1000
+          && d.createdAt == request.time;
+      }
+    }
+  }
+}

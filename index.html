@@ -65,6 +65,16 @@
   </header>
 
   <main>
+    <section id="verse" class="verse-section">
+      <div class="container">
+        <figure class="verse reveal">
+          <span class="verse-cross" id="verseCross"></span>
+          <blockquote id="verseText"></blockquote>
+          <figcaption id="verseRef"></figcaption>
+        </figure>
+      </div>
+    </section>
+
     <section id="couple">
       <div class="container">
         <div class="section-head reveal">
@@ -110,12 +120,12 @@
 
         <form id="rsvpForm" class="rsvp-card reveal" novalidate>
           <p class="demo-note" id="demoNote" hidden>
-            Demo mode: responses are saved only in this browser. Add your Google Apps Script URL to
-            <code>rsvp.endpoint</code> in <code>js/config.js</code> to collect real RSVPs.
+            Demo mode: responses are saved only in this browser. Add your Firebase settings to
+            <code>rsvp.firebase</code> in <code>js/config.js</code> to collect real RSVPs.
           </p>
           <label class="field">
-            <span>Your name(s)</span>
-            <input type="text" name="name" maxlength="100" autocomplete="name" placeholder="e.g. Sarah &amp; Tom Miller" required>
+            <span>Your name / family name</span>
+            <input type="text" name="name" maxlength="100" autocomplete="name" placeholder="e.g. Joseph Thomas &amp; family" required>
           </label>
 
           <fieldset class="choices">
@@ -130,10 +140,14 @@
             </label>
           </fieldset>
 
-          <label class="field" id="guestsField" hidden>
-            <span>Number of guests (including you)</span>
-            <select name="guests" id="guestsSelect"></select>
-          </label>
+          <div class="field" id="membersField" hidden>
+            <label for="members">How many from your family will be joining? <em>(including you)</em></label>
+            <div class="stepper">
+              <button type="button" data-step="-1" aria-label="One person fewer">−</button>
+              <input type="number" id="members" name="members" value="1" min="1" max="10" inputmode="numeric">
+              <button type="button" data-step="1" aria-label="One person more">+</button>
+            </div>
+          </div>
 
           <label class="field">
             <span>A message for the couple <em>(optional)</em></span>
@@ -153,6 +167,7 @@
           </svg>
           <h3 id="thanksTitle">Thank you!</h3>
           <p id="thanksMsg"></p>
+          <p class="thanks-count" id="thanksCount"></p>
           <button type="button" class="btn btn-outline" id="rsvpAgain">Send another response</button>
         </div>
       </div>

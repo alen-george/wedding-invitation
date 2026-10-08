@@ -31,6 +31,10 @@
   const RINGS =
     '<svg viewBox="0 0 54 36" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">' +
     '<circle cx="20" cy="22" r="12"/><circle cx="34" cy="22" r="12"/><path d="M16 9l4-5 4 5-4 3z" fill="currentColor" fill-opacity=".3"/></svg>';
+  const CROSS =
+    '<svg viewBox="0 0 160 44" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">' +
+    '<path d="M0 24h62M98 24h62"/><circle cx="66" cy="24" r="1.6" fill="currentColor"/><circle cx="94" cy="24" r="1.6" fill="currentColor"/>' +
+    '<path d="M80 3v38M70 15h20" stroke-width="2.4" stroke-linecap="round"/></svg>';
 
   /* ---------- Dates ----------
      Times in the config are wall-clock times at the venue. For display we format them as-is,
@@ -262,6 +266,15 @@
     new IntersectionObserver(([e]) => nav.classList.toggle("show", !e.isIntersecting), { threshold: 0.15 }).observe(hero);
   }
 
+  /* ---------- Bible verse ---------- */
+  function renderVerse() {
+    const V = C.bibleVerse || {};
+    if (!V.text) { removeSection("verse"); return; }
+    $("#verseCross").innerHTML = CROSS;
+    $("#verseText").textContent = V.text;
+    $("#verseRef").textContent = V.reference || "";
+  }
+
   /* ---------- Couple ---------- */
   function renderCouple() {
     const card = (p, delay) => `
@@ -390,24 +403,47 @@
     });
   }
 
+  /* ---------- Firebase ----------
+     RSVPs live in Cloud Firestore. The SDK is loaded only when the form or guestbook needs it.
+     Each reply is saved to "rsvps" (private, only the couple can read it); replies with a message
+     also get a copy in "wishes" (public guestbook), under the same id. See firestore.rules. */
+  const FIREBASE_SDK = "https://www.gstatic.com/firebasejs/13.0.0";
+  const fbConfig = R.firebase && R.firebase.projectId ? R.firebase : null;
+  let firestorePromise = null;
+  function firestore() {
+    if (!firestorePromise) {
+      firestorePromise = Promise.all([
+        import(`${FIREBASE_SDK}/firebase-app.js`),
+        import(`${FIREBASE_SDK}/firebase-firestore-lite.js`)
+      ]).then(([app, fs]) => {
+        const db = fs.getFirestore(app.initializeApp(fbConfig));
+        if (fbConfig.emulator) fs.connectFirestoreEmulator(db, "127.0.0.1", 8080); // local testing only
+        return { fs, db };
+      });
+      firestorePromise.catch(() => { firestorePromise = null; }); // let a later attempt retry
+    }
+    return firestorePromise;
+  }
+
   /* ---------- RSVP ---------- */
   const LOCAL_KEY = "wedding-rsvp-demo";
 
   async function sendRsvp(data) {
-    if (!R.endpoint) {
+    if (!fbConfig) {
       const all = storage.get(LOCAL_KEY, []);
       all.push(Object.assign({}, data, { time: new Date().toISOString() }));
       storage.set(LOCAL_KEY, all);
       return;
     }
-    // text/plain keeps this a "simple" request, so Google Apps Script accepts it without a CORS preflight.
-    const res = await fetch(R.endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(data)
-    });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.error || "Could not save your RSVP.");
+    const { fs, db } = await firestore();
+    const batch = fs.writeBatch(db);
+    const ref = fs.doc(fs.collection(db, "rsvps"));
+    const createdAt = fs.serverTimestamp();
+    batch.set(ref, { name: data.name, attending: data.attending, members: data.members, message: data.message, createdAt });
+    if (data.message && R.showWishes !== false) {
+      batch.set(fs.doc(db, "wishes", ref.id), { name: data.name, attending: data.attending, message: data.message, createdAt });
+    }
+    await batch.commit();
   }
 
   function setupRsvp() {
@@ -416,16 +452,34 @@
     const form = $("#rsvpForm");
     const status = $("#rsvpStatus");
     const submit = $("#rsvpSubmit");
-    const guestsField = $("#guestsField");
+    const membersField = $("#membersField");
+    const members = $("#members");
     const nameInput = $("input[name=\"name\"]", form);
     const setStatus = (msg, cls = "") => { status.textContent = msg; status.className = `form-status ${cls}`; };
 
     $("#lblYes").textContent = R.attendingLabel || "Joyfully accept";
     $("#lblNo").textContent = R.decliningLabel || "Regretfully decline";
-    const max = Math.max(1, R.maxGuests || 1);
-    $("#guestsSelect").innerHTML = Array.from({ length: max }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join("");
-    if (max === 1) guestsField.remove();
-    $("#demoNote").hidden = !!R.endpoint;
+    $("#demoNote").hidden = !!fbConfig;
+    if (fbConfig) form.addEventListener("focusin", () => firestore().catch(() => {}), { once: true });
+
+    // Family members stepper: 1 (just the guest) up to rsvp.maxGuests.
+    const max = Math.max(1, R.maxGuests || 10);
+    const clampMembers = (n) => Math.min(max, Math.max(1, Math.round(Number(n)) || 1));
+    const syncMembers = () => {
+      members.value = clampMembers(members.value);
+      $("[data-step=\"-1\"]", membersField).disabled = +members.value <= 1;
+      $("[data-step=\"1\"]", membersField).disabled = +members.value >= max;
+    };
+    members.max = max;
+    membersField.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-step]");
+      if (!b) return;
+      members.value = clampMembers(+members.value + +b.dataset.step);
+      syncMembers();
+    });
+    members.addEventListener("change", syncMembers);
+    syncMembers();
+    if (max === 1) membersField.remove();
 
     if (R.deadline) {
       $("#rsvpDeadline").textContent = `Kindly respond by ${fmtDate(R.deadline)}`;
@@ -437,18 +491,18 @@
     }
 
     form.addEventListener("change", (e) => {
-      if (e.target.name === "attending" && form.contains(guestsField)) guestsField.hidden = e.target.value !== "yes";
+      if (e.target.name === "attending" && form.contains(membersField)) membersField.hidden = e.target.value !== "yes";
     });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const fd = new FormData(form);
+      const yes = fd.get("attending") === "yes";
       const data = {
         name: String(fd.get("name") || "").trim(),
         attending: fd.get("attending"),
-        guests: fd.get("attending") === "yes" ? Number(fd.get("guests") || 1) : 0,
-        comment: String(fd.get("comment") || "").trim(),
-        website: fd.get("website") || ""
+        members: yes ? clampMembers(fd.get("members") || 1) : 0,
+        message: String(fd.get("comment") || "").trim()
       };
       if (!data.name) { setStatus("Please tell us your name.", "error"); nameInput.focus(); return; }
       if (!data.attending) { setStatus("Please let us know if you can attend.", "error"); return; }
@@ -457,17 +511,20 @@
       submit.textContent = "Sending…";
       setStatus("");
       try {
-        await sendRsvp(data);
-        const yes = data.attending === "yes";
+        // Spam trap: bots fill the hidden "website" field. Pretend it worked without saving.
+        if (!fd.get("website")) await sendRsvp(data);
         $("#thanksTitle").textContent = `Thank you, ${data.name.split(/[\s&,]/)[0]}!`;
         $("#thanksMsg").textContent = yes
           ? R.thanksAttending || "We can't wait to celebrate with you."
           : R.thanksDeclining || "We'll miss you. Thank you for letting us know.";
+        $("#thanksCount").textContent = !yes ? ""
+          : data.members === 1 ? "We've noted 1 guest." : `We've noted ${data.members} guests from your family.`;
         form.hidden = true;
         $("#rsvpThanks").hidden = false;
-        if (data.comment) addWish({ name: data.name, comment: data.comment, attending: yes ? "Yes" : "No" });
+        if (data.message && R.showWishes !== false) addWish(data);
         form.reset();
-        guestsField.hidden = true;
+        syncMembers();
+        membersField.hidden = true;
       } catch (err) {
         setStatus("Sorry, something went wrong. Please try again in a moment.", "error");
         console.error(err);
@@ -485,12 +542,14 @@
     });
   }
 
-  /* ---------- Wishes (guestbook) ---------- */
+  /* ---------- Wishes (guestbook) ----------
+     Loaded a page at a time, and only once the guest scrolls near the section,
+     so each visit costs a handful of database reads at most. */
   const WISHES_PAGE = 9;
   function wishCard(w, extraCls = "") {
     const yes = /^y/i.test(String(w.attending));
     return `<article class="wish ${extraCls}">
-      <p>${esc(w.comment)}</p>
+      <p>${esc(w.message)}</p>
       <footer><strong>${esc(w.name)}</strong><span class="badge ${yes ? "yes" : "no"}">${yes ? "Attending" : "Sending love"}</span></footer>
     </article>`;
   }
@@ -502,37 +561,60 @@
     list.insertAdjacentHTML("afterbegin", wishCard(w, "new"));
   }
 
-  async function loadWishes() {
+  function setupWishes() {
     if (R.enabled === false) return;
     if (R.showWishes === false) { removeSection("wishes"); return; }
     const list = $("#wishesList");
-    let wishes = [];
-    try {
-      if (R.endpoint) {
-        const url = R.endpoint + (R.endpoint.includes("?") ? "&" : "?") + "action=wishes";
-        const json = await (await fetch(url)).json();
-        wishes = json.wishes || [];
-      } else {
-        wishes = storage.get(LOCAL_KEY, []).filter((w) => w.comment).reverse();
-      }
-    } catch (err) {
-      console.error(err);
-      list.innerHTML = '<p class="wishes-empty">The guestbook could not be loaded right now.</p>';
-      return;
-    }
-    if (!wishes.length) {
-      list.innerHTML = '<p class="wishes-empty">No wishes yet. Be the first to leave a message for the couple!</p>';
-      return;
-    }
-    list.innerHTML = wishes.map((w, i) => wishCard(w, i >= WISHES_PAGE ? "extra" : "")).join("");
     const more = $("#moreWishes");
-    if (wishes.length > WISHES_PAGE) {
-      more.hidden = false;
-      more.addEventListener("click", () => {
-        $$(".wish.extra", list).slice(0, WISHES_PAGE).forEach((w) => w.classList.remove("extra"));
-        if (!$(".wish.extra", list)) more.hidden = true;
-      });
+    let offset = 0;      // demo mode
+    let cursor = null;   // Firestore: last wish shown
+
+    async function fetchPage() {
+      if (!fbConfig) {
+        const all = storage.get(LOCAL_KEY, []).filter((w) => w.message).reverse();
+        const page = all.slice(offset, offset + WISHES_PAGE);
+        offset += page.length;
+        return { wishes: page, hasMore: all.length > offset };
+      }
+      const { fs, db } = await firestore();
+      const snap = await fs.getDocs(fs.query(
+        fs.collection(db, "wishes"),
+        fs.orderBy("createdAt", "desc"),
+        ...(cursor ? [fs.startAfter(cursor)] : []),
+        fs.limit(WISHES_PAGE + 1)
+      ));
+      const docs = snap.docs.slice(0, WISHES_PAGE);
+      if (docs.length) cursor = docs[docs.length - 1];
+      return { wishes: docs.map((d) => d.data()), hasMore: snap.docs.length > WISHES_PAGE };
     }
+
+    let first = true;
+    async function loadMore() {
+      more.disabled = true;
+      try {
+        const { wishes, hasMore } = await fetchPage();
+        const html = wishes.map((w) => wishCard(w)).join("");
+        if (first) {
+          list.innerHTML = html || '<p class="wishes-empty">No wishes yet. Be the first to leave a message for the couple!</p>';
+          first = false;
+        } else {
+          list.insertAdjacentHTML("beforeend", html);
+        }
+        more.hidden = !hasMore;
+      } catch (err) {
+        console.error(err);
+        if (first) list.innerHTML = '<p class="wishes-empty">The guestbook could not be loaded right now.</p>';
+      } finally {
+        more.disabled = false;
+      }
+    }
+    more.addEventListener("click", loadMore);
+
+    if (!("IntersectionObserver" in window)) { loadMore(); return; }
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { io.disconnect(); loadMore(); }
+    }, { rootMargin: "800px 0px" });
+    io.observe($("#wishes"));
   }
 
   /* ---------- Footer ---------- */
@@ -541,7 +623,7 @@
     $("#footerDate").textContent = mainDate ? fmtDateShort(mainDate) : "";
     $("#footerNote").textContent = C.footerNote || "";
     $("#hashtag").textContent = C.hashtag || "";
-    $("#contacts").innerHTML = (C.contacts || []).map((c) =>
+    $("#contacts").innerHTML = (C.contacts || []).filter((c) => c.phone).map((c) =>
       `<a href="tel:${esc(String(c.phone).replace(/[^\d+]/g, ""))}">${esc(c.name)} · ${esc(c.phone)}</a>`).join("");
   }
 
@@ -606,11 +688,12 @@
   renderHero();
   setupCountdown();
   setupNav();
+  renderVerse();
   renderCouple();
   renderEvents();
   renderGallery();
   setupRsvp();
-  loadWishes();
+  setupWishes();
   renderFooter();
   observeReveals();
   setupIntro();
