@@ -9,7 +9,7 @@
 window.WEDDING_CONFIG = {
   /* ---------- The couple ---------- */
   bride: {
-    firstName: "Thaleetha",                       // shown big on the page
+    firstName: "Thaleetha Kummi",                       // shown big on the page
     fullName: "Thaleetha Kummi Sunil",
     parents: "Daughter of Mr. Sunil Jose  & Mrs. Dayana Sunil",
     bio: "A social worker and a sunshine soul who loves sports and long conversations.",
