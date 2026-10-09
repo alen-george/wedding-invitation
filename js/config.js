@@ -118,7 +118,7 @@ window.WEDDING_CONFIG = {
       projectId: "weddinginvites-f5395",
       appId: "1:424563779387:web:a4ce969b881dead135f91e"
     },
-    deadline: "2026-12-15",                  // "" for no deadline
+    deadline: "",                  // "" for no deadline
     maxGuests: 10,                           // most family members one reply can include (counting themselves)
     attendingLabel: "Joyfully accept",
     decliningLabel: "Regretfully decline",
