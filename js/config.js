@@ -60,9 +60,9 @@ window.WEDDING_CONFIG = {
   events: [
     {
       title: "Wedding Ceremony",
-      start: "2027-01-02T16:00",
-      end: "2027-01-02T20:30",
-      description: "Please be seated by 4:30 PM.",
+      start: "2026-12-31T17:00",
+      end: "2026-12-31T18:30",
+      description: "Please be seated by 5:00 PM.",
       venue: {
         name: "Sacred Heart Church Poovarani",
         address: "Poovarani, Pala, Kerala, India",
@@ -73,8 +73,8 @@ window.WEDDING_CONFIG = {
     },
     {
       title: "Reception & Dinner",
-      start: "2027-01-02T18:30",
-      end: "2027-01-02T21:00",
+      start: "2026-12-31T19:00",
+      end: "2026-12-31T21:00",
       description: "Dinner, music and plenty of celebration.",
       venue: {
         name: "Sacred Heart Church Parish Hall",
