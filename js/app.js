@@ -622,6 +622,7 @@
     $("#footerNames").textContent = coupleNames;
     $("#footerDate").textContent = mainDate ? fmtDateShort(mainDate) : "";
     $("#footerNote").textContent = C.footerNote || "";
+    $("#compliments").textContent = C.compliments || "";
     $("#hashtag").textContent = C.hashtag || "";
     $("#contacts").innerHTML = (C.contacts || []).filter((c) => c.phone).map((c) =>
       `<a href="tel:${esc(String(c.phone).replace(/[^\d+]/g, ""))}">${esc(c.name)} · ${esc(c.phone)}</a>`).join("");

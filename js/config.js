@@ -147,5 +147,6 @@ window.WEDDING_CONFIG = {
     { name: "Alen", phone: "+917012877627" },
     { name: "Thaleetha" }
   ],
-  footerNote: "Your presence is the greatest gift of all."
+  footerNote: "Your presence is the greatest gift of all.",
+  compliments: "With best compliments from Allwin, Josen Almodad & Alphonsa"   // shown at the very bottom; "" to hide
 };
