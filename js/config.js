@@ -93,7 +93,7 @@ window.WEDDING_CONFIG = {
      gallery: photo grid further down; each item is a path, or { src, caption }
      Missing photos are skipped automatically, so the site never shows broken images. */
   photos: {
-    hero: ["photos/hero-1.JPG","photos/hero-2.png", "photos/hero-3.jpg", "photos/hero-4.jpg"],
+    hero: ["photos/hero-1.jpg","photos/hero-5.jpg","photos/hero-2.png", "photos/hero-3.jpg", "photos/hero-4.jpg"],
     heroInterval: 10000,                      // milliseconds per slide
     gallery: [
       { src: "photos/gallery-1.jpg", caption: "Where it all began" },
