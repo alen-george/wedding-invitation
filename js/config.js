@@ -94,7 +94,7 @@ window.WEDDING_CONFIG = {
      Missing photos are skipped automatically, so the site never shows broken images. */
   photos: {
     hero: ["photos/hero-1.JPG","photos/hero-2.png", "photos/hero-3.jpg", "photos/hero-4.jpg"],
-    heroInterval: 6000,                      // milliseconds per slide
+    heroInterval: 10000,                      // milliseconds per slide
     gallery: [
       { src: "photos/gallery-1.jpg", caption: "Where it all began" },
       { src: "photos/gallery-2.jpg", caption: "" },
